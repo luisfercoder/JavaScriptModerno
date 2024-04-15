@@ -24,6 +24,12 @@ header {
         text-align: left;
     }
 }
+#logo {
+    width: 150px;
+    height: 60px;
+    padding-bottom: 10px;
+
+}
 .borrar-curso {
     background-color: red;
     border-radius: 50%;
