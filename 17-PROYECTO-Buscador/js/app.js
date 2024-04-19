@@ -113,6 +113,7 @@ function filterCars() {
     } else {
         noResult();
     }
+    
 }
 
 function noResult() {
