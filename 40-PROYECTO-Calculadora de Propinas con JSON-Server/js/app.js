@@ -1,7 +1,7 @@
 let cliente = {
   table: '',
   hour:'',
-  order :[]
+  pedido :[]
 };
 const categorias = {
   1:'Comida',
@@ -34,9 +34,7 @@ function saveClient(){
     } return;
   }
   //Assign data of form of client
-  cliente = {...cliente, table, hour}
-  
-  console.log(cliente)
+  cliente = {...cliente, table, hour}  
   //Hide Modal
   const modalForm = document.querySelector('#formulario');
   let modalBootstrap =bootstrap.Modal.getInstance(modalForm);
@@ -104,6 +102,130 @@ function showDishes(platillos){
 }
 
 function agregarPlatillo(producto){
-  console.log(producto)
+let {pedido}= cliente;
+//review that quantiy be  more than 0
+if(producto.cantidad > 0){
+//check if already exist the element
 
+   if(pedido.some(articulo => articulo.id===producto.id)){
+   //actualize the quantity 
+   const pedidoActualizado = pedido.map(articulo =>{
+   if(articulo.id===producto.id){
+   articulo.cantidad =producto.cantidad;
+   }
+   return articulo;
+   });
+  //Assign the new array to client
+  cliente.pedido = [...pedidoActualizado]
+   }else{
+      cliente.pedido=[...pedido, producto];
+   }
+}else{
+//Erase elements whean quantity is 0
+const resultado = pedido.filter(articulo=> articulo.id !== producto.id);
+cliente.pedido = [...resultado];
+}
+//clean code HTML
+limpiarHTML();
+//show the resume
+actualizarResumen();
+}
+
+function actualizarResumen(){
+  const contenido = document.querySelector('#resumen .contenido');
+
+  const resume = document.createElement('DIV');
+  resume.classList.add('col-md-6','card', 'py-5', 'px-3', 'shadow');
+  //Info from table
+  const mesa = document.createElement('P');
+  mesa.textContent = 'Mesa: ';
+  mesa.classList.add('fw-bold');
+
+  const mesaSpan = document.createElement('SPAN');
+  mesaSpan.textContent = cliente.table;
+  mesaSpan.classList.add('fw-normal');
+    //Info from hour
+    const hora = document.createElement('P');
+    hora.textContent = 'Hora: ';
+    hora.classList.add('fw-bold');
+  
+    const horaSpan = document.createElement('SPAN');
+    horaSpan.textContent = cliente.hour;
+    horaSpan.classList.add('fw-normal');
+  //Add to parents
+  mesa.appendChild(mesaSpan);
+  hora.appendChild(horaSpan);
+
+  //Titulo de la seccion
+  const heading = document.createElement('H3');
+  heading.textContent = 'Platillos Consumidos';
+  heading.classList.add('my-4','text-center');
+  
+  //Iterar above array of orders
+  const grupo = document.createElement('UL');
+  grupo.classList.add('list-group');
+
+  const { pedido }=cliente;
+  pedido.forEach(articulo =>{
+    const {nombre, cantidad, precio,id}= articulo;
+    const lista = document.createElement('LI');
+    lista.classList.add('list-group-item');
+
+    const nombreEl = document.createElement('H4');
+    nombreEl.classList.add('my-4');
+    nombreEl.textContent = nombre;
+
+    //quantity of article
+    const cantidadEl = document.createElement('P');
+    cantidadEl.classList.add('fw-bold');
+    cantidadEl.textContent = 'Cantidad: ';
+
+    const cantidadValor = document.createElement('SPAN');
+    cantidadValor.classList.add('fw-normal');
+    cantidadValor.textContent = cantidad;
+
+        //price of article
+        const priceEl = document.createElement('P');
+        priceEl.classList.add('fw-bold');
+        priceEl.textContent = 'Precio: ';
+    
+        const priceValor = document.createElement('SPAN');
+        priceValor.classList.add('fw-normal');
+        priceValor.textContent = `$${precio}`;
+
+    //Add values at containers
+    cantidadEl.appendChild(cantidadValor);
+    priceEl.appendChild(priceValor);
+
+
+    //Add elements to list
+    lista.appendChild(nombreEl);
+    lista.appendChild(cantidadEl);
+    lista.appendChild(priceEl);
+
+
+
+
+    //Add list a group 
+    grupo.appendChild(lista);
+
+  });
+  //Add to content
+  resume.appendChild(mesa);
+  resume.appendChild(hora);
+  resume.appendChild(heading);
+  resume.appendChild(grupo);
+
+
+
+  contenido.appendChild(resume);
+
+};
+
+function limpiarHTML(){
+  const contenido = document.querySelector('#resumen .contenido');
+
+  while(contenido.firstChild){
+    contenido.removeChild(contenido.firstChild);
+  }
 }
