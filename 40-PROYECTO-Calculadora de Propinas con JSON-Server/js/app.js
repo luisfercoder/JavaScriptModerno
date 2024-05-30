@@ -120,22 +120,29 @@ if(producto.cantidad > 0){
    }else{
       cliente.pedido=[...pedido, producto];
    }
-}else{
-//Erase elements whean quantity is 0
-const resultado = pedido.filter(articulo=> articulo.id !== producto.id);
-cliente.pedido = [...resultado];
-}
-//clean code HTML
-limpiarHTML();
-//show the resume
-actualizarResumen();
+    }else{
+    //Erase elements whean quantity is 0
+    const resultado = pedido.filter(articulo=> articulo.id !== producto.id);
+    cliente.pedido = [...resultado];
+    }
+   //clean code HTML
+   limpiarHTML(); 
+
+   if(cliente.pedido.length){
+     //show the resume
+     actualizarResumen();
+    }else{
+    mensagePedidoVacio();
+    }
+
+
 }
 
 function actualizarResumen(){
   const contenido = document.querySelector('#resumen .contenido');
 
   const resume = document.createElement('DIV');
-  resume.classList.add('col-md-6','card', 'py-5', 'px-3', 'shadow');
+  resume.classList.add('col-md-6','card', 'py-2', 'px-3', 'shadow');
   //Info from table
   const mesa = document.createElement('P');
   mesa.textContent = 'Mesa: ';
@@ -193,15 +200,38 @@ function actualizarResumen(){
         priceValor.classList.add('fw-normal');
         priceValor.textContent = `$${precio}`;
 
+        //subtotal of article
+        const subTotalEl = document.createElement('P');
+        subTotalEl.classList.add('fw-bold');
+        subTotalEl.textContent = 'Subtotal: ';
+        
+        const subTotalValor = document.createElement('SPAN');
+        subTotalValor.classList.add('fw-normal');
+        subTotalValor.textContent = calcularSubtotal(precio ,cantidad);
+
+        //button to erase
+        const btnEliminar = document.createElement('BUTTON');
+        btnEliminar.classList.add('btn','btn-danger');
+        btnEliminar.textContent ='Eliminar el Pedido';
+
+        btnEliminar.onclick = function(){
+         eliminarProducto(id)
+        }
+
     //Add values at containers
     cantidadEl.appendChild(cantidadValor);
     priceEl.appendChild(priceValor);
+    subTotalEl.appendChild(subTotalValor);
+
 
 
     //Add elements to list
     lista.appendChild(nombreEl);
     lista.appendChild(cantidadEl);
     lista.appendChild(priceEl);
+    lista.appendChild(subTotalEl);
+    lista.appendChild(btnEliminar)
+
 
 
 
@@ -211,14 +241,16 @@ function actualizarResumen(){
 
   });
   //Add to content
+  resume.appendChild(heading);  
   resume.appendChild(mesa);
   resume.appendChild(hora);
-  resume.appendChild(heading);
+
   resume.appendChild(grupo);
 
-
-
   contenido.appendChild(resume);
+
+  //Show form of propinas
+  formularioPropinas();
 
 };
 
@@ -228,4 +260,196 @@ function limpiarHTML(){
   while(contenido.firstChild){
     contenido.removeChild(contenido.firstChild);
   }
+}
+function calcularSubtotal (precio,cantidad){
+
+  return `$${precio*cantidad}`;
+}
+function eliminarProducto(id){
+  const {pedido} = cliente;
+  const resultado = pedido.filter(articulo=> articulo.id !== id);
+ cliente.pedido = [...resultado];
+
+ //clean code HTML
+limpiarHTML();
+if(cliente.pedido.length){
+
+  //show the resume
+  actualizarResumen();
+ }else{
+ mensagePedidoVacio();
+ }
+//  //Return quantity at 0 in the form
+ const productoEliminado = `#producto-${id}`;
+ console.log(productoEliminado);
+ const inputEliminado = document.querySelector(productoEliminado);
+ inputEliminado.value = 0;
+
+}
+
+function mensagePedidoVacio(){
+  const contenido = document.querySelector('#resumen .contenido');
+
+  const texto = document.createElement('P');
+  texto.classList.add('text-center');
+  texto.textContent = 'Añade los elmentos del pedido';
+
+  contenido.appendChild(texto)
+}
+
+function formularioPropinas(){
+
+  const contenido = document.querySelector('#resumen .contenido');
+
+  const formulario = document.createElement('DIV');
+  formulario.classList.add('col-md-6','formulario');
+
+  const divFormulario = document.createElement('DIV');
+  divFormulario.classList.add('card','py-2','px-3','shadow');
+
+  const heading = document.createElement('H3');
+  heading.classList.add('my-4','text-center');
+  heading.textContent = 'Propina';
+
+  //Radio button 10%
+  const radio10=document.createElement('INPUT');
+  radio10.type = 'radio';
+  radio10.name ='propina';
+  radio10.value ="10";
+  radio10.classList.add('form-check-input');
+  radio10.onclick = calcularPropina;
+
+  const radio10Label = document.createElement('LABEL');
+  radio10Label.textContent = '10%';
+  radio10Label.classList.add('form-check-label');
+
+  const radio10Div = document.createElement('DIV');
+  radio10Div.classList.add('form-check');
+
+  radio10Div.appendChild(radio10);
+  radio10Div.appendChild(radio10Label);
+  
+    //Radio button 15%
+    const radio15=document.createElement('INPUT');
+    radio15.type = 'radio';
+    radio15.name ='propina';
+    radio15.value ="15";
+    radio15.classList.add('form-check-input');
+    radio15.onclick = calcularPropina;
+
+  
+    const radio15Label = document.createElement('LABEL');
+    radio15Label.textContent = '15%';
+    radio15Label.classList.add('form-check-label');
+  
+    const radio15Div = document.createElement('DIV');
+    radio15Div.classList.add('form-check');
+  
+    radio15Div.appendChild(radio15);
+    radio15Div.appendChild(radio15Label);
+
+        //Radio button 30%
+        const radio30=document.createElement('INPUT');
+        radio30.type = 'radio';
+        radio30.name ='propina';
+        radio30.value ="30";
+        radio30.classList.add('form-check-input');
+        radio30.onclick = calcularPropina;
+
+      
+        const radio30Label = document.createElement('LABEL');
+        radio30Label.textContent = '30%';
+        radio30Label.classList.add('form-check-label');
+      
+        const radio30Div = document.createElement('DIV');
+        radio30Div.classList.add('form-check');
+      
+        radio30Div.appendChild(radio30);
+        radio30Div.appendChild(radio30Label);
+  
+  //Add to principal Div
+  divFormulario.appendChild(heading);
+  divFormulario.appendChild(radio10Div);
+  divFormulario.appendChild(radio15Div);
+  divFormulario.appendChild(radio30Div);
+
+
+  //Add to form
+  formulario.appendChild(divFormulario);
+
+
+  contenido.append(formulario);
+
+}
+
+function calcularPropina(){
+  
+  const {pedido}=cliente;
+  let subtotal=0;
+  //Calculate subtotal 
+  pedido.forEach(articulo =>{
+    subtotal += articulo.cantidad*articulo.precio;
+  });
+
+  //Select Radio button with client tip
+  const propinaSeleccionada = document.querySelector('[name="propina"]:checked').value;
+  
+  //Calculate tip
+  const propina = ((subtotal*parseInt(propinaSeleccionada))/100);
+  console.log(propina)
+
+  //Calculate total to pay 
+  const total = subtotal +propina;
+  mostrarTotalHTML(subtotal, total, propina);
+}
+function mostrarTotalHTML(subtotal, total, propina){
+
+   const divTotales = document.createElement('DIV');
+   divTotales.classList.add('total-pagar','my-5');  
+  //subtotal
+  const subtotalParrafo = document.createElement('P');
+  subtotalParrafo.classList.add('fs-3','fw-bold','mt-2');
+  subtotalParrafo.textContent = 'Subtotal Consumo: ';
+
+  const subtotalSpan = document.createElement('SPAN');
+  subtotalSpan.classList.add('fw-normal');
+  subtotalSpan.textContent = `$${subtotal}`;
+
+  subtotalParrafo.appendChild(subtotalSpan);
+
+  //tip
+  const propinaParrafo = document.createElement('P');
+  propinaParrafo.classList.add('fs-3','fw-bold','mt-2');
+  propinaParrafo.textContent = 'Propina: ';
+
+   const propinaSpan = document.createElement('SPAN');
+  propinaSpan.classList.add('fw-normal');
+  propinaSpan.textContent = `$${propina}`;
+  
+  propinaParrafo.appendChild(propinaSpan);
+
+  //tip
+  const totalParrafo = document.createElement('P');
+  totalParrafo.classList.add('fs-3','fw-bold','mt-2');
+  totalParrafo.textContent = 'Total: ';
+  
+  const totalSpan = document.createElement('SPAN');
+  totalSpan.classList.add('fw-normal');
+  totalSpan.textContent = `$${total}`;
+    
+  totalParrafo.appendChild(totalSpan);  
+   
+  //Erase the last result
+  const totalpagarDiv= document.querySelector('.total-pagar');
+  if(totalpagarDiv){
+  totalpagarDiv.remove();
+  }
+  divTotales.appendChild(subtotalParrafo);
+  divTotales.appendChild(propinaParrafo);
+  divTotales.appendChild(totalParrafo);
+
+
+
+  const formulario= document.querySelector('.formulario > div');
+  formulario.appendChild(divTotales);
 }
